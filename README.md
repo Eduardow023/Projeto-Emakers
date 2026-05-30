@@ -25,6 +25,6 @@ A modelagem do banco de dados deste projeto foi desenhada seguindo os princípio
 #Justificativa da Escolha
 Independência de Estado e Efemeridade: Alinhado ao conceito de microsserviços modernos, o banco de dados nasce e morre junto com o ciclo de vida do contêiner. Isso garante um ambiente de execução isolado, sem o acúmulo de dados residuais de testes passados que poderiam comprometer as regras de validação do sistema.
 
-#Database-as-Code e Portabilidade Total: Toda a estrutura relacional do ecossistema está versionada em código puro através de scripts de migração do Flyway. Isso elimina qualquer necessidade de instalação, configuração ou intervenção manual em ferramentas visuais externas (como o MySQL Workbench) por parte do avaliador.
+#Database-as-Code e Portabilidade Total: Toda a estrutura relacional do ecossistema está versionada em código puro através de scripts de migração do Flyway. Isso elimina qualquer necessidade de instalação, configuração ou intervenção manual em ferramentas visuais externas (como o MySQL Workbench).
 
 #Escalabilidade e CI/CD: A arquitetura torna o serviço portátil, leve e ideal para esteiras de Integração Contínua (CI/CD), permitindo que múltiplas instâncias da API sejam escaladas horizontalmente em segundos, já que cada contêiner carrega seu próprio motor relacional autônomo na inicialização.
