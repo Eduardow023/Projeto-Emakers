@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 // lida com o agente ativo do sistema (a pessoa)
 @Service
-public class PessoaServico {
+public class PessoaServico{
 
     @Autowired
     private PessoaRepositorio pessoaRepositorio;
@@ -17,11 +17,19 @@ public class PessoaServico {
     @Autowired
     private LivroRepositorio livroRepositorio;
 
-    public Pessoa salvar(Pessoa pessoa) {
+    @Autowired
+    private ViaCepServico viaCepServico;
+
+    public Pessoa salvar(Pessoa pessoa){
+        // Busca o endereço na API externa usando o CEP digitado no cadastro
+        String enderecoCompleto = viaCepServico.buscarEnderecoPorCep(pessoa.getCep());
+        
+        pessoa.setEndereco(enderecoCompleto);
+        
         return pessoaRepositorio.save(pessoa);
     }
 
-    public List<Pessoa> listarTodas() {
+    public List<Pessoa> listarTodas(){
         return pessoaRepositorio.findAll();
     }
 

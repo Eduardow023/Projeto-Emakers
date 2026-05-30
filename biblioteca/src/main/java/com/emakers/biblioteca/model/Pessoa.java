@@ -21,7 +21,8 @@ public class Pessoa {
     
     private String nome;  //colunas de pessoa/atributos
     private String cpf;
-    private String cep;
+    private String cep; 
+    private String endereco;
     private String email;
     private String senha;
 
