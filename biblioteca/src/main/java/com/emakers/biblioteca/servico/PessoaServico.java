@@ -5,6 +5,7 @@ import com.emakers.biblioteca.model.Pessoa;
 import com.emakers.biblioteca.repositorio.LivroRepositorio;
 import com.emakers.biblioteca.repositorio.PessoaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 // lida com o agente ativo do sistema (a pessoa)
@@ -20,15 +21,18 @@ public class PessoaServico{
     @Autowired
     private ViaCepServico viaCepServico;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder; 
+
     public Pessoa salvar(Pessoa pessoa){
-        // Busca o endereço na API externa usando o CEP digitado no cadastro
-        String enderecoCompleto = viaCepServico.buscarEnderecoPorCep(pessoa.getCep());
+        // Criptografa a senha antes de mandar para o banco de dados
+        pessoa.setSenha(passwordEncoder.encode(pessoa.getSenha()));
         
+        String enderecoCompleto = viaCepServico.buscarEnderecoPorCep(pessoa.getCep());
         pessoa.setEndereco(enderecoCompleto);
         
         return pessoaRepositorio.save(pessoa);
     }
-
     public List<Pessoa> listarTodas(){
         return pessoaRepositorio.findAll();
     }
@@ -52,7 +56,7 @@ public class PessoaServico{
         pessoaRepositorio.delete(pessoa);
     }
 
-    // Funcionalidade para pegar Livro emprestado (2 pontos)
+    // Func pegar emprestado 
     public void emprestarLivro(Long idPessoa, Long idLivro) {
         Pessoa pessoa = buscarPorId(idPessoa);
         Livro livro = livroRepositorio.findById(idLivro).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
@@ -61,7 +65,7 @@ public class PessoaServico{
         pessoaRepositorio.save(pessoa);
     }
 
-    // Funcionalidade para devolver um Livro (2 pontos)
+    //Func para devolver um Livro
     public void devolverLivro(Long idPessoa, Long idLivro) {
         Pessoa pessoa = buscarPorId(idPessoa);
         Livro livro = livroRepositorio.findById(idLivro).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
