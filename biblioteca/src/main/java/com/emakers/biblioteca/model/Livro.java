@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-public class Livro {
+public class Livro{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +18,13 @@ public class Livro {
     private String nome;
     private String autor;
     private LocalDate dataLancamento;
+    private Integer quantidade;
+
+    public void decrementarQuantidade() {
+        this.quantidade--;
+    }
+
+    public void incrementarQuantidade() {
+        this.quantidade++;
+    }
 }

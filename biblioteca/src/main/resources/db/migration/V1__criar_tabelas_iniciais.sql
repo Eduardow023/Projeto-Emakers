@@ -2,7 +2,8 @@ CREATE TABLE livro(
     id_livro BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     autor VARCHAR(255) NOT NULL,
-    data_lancamento DATE
+    data_lancamento DATE,
+    quantidade INT NOT NULL
 );
 -- Flyway resolve assumindo o controle da evolução da estrutura do banco(schema)
 CREATE TABLE pessoa(

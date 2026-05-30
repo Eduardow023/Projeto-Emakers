@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
-// lida com o agente ativo do sistema (a pessoa)
+
 @Service
-public class PessoaServico{
+public class PessoaServico {
 
     @Autowired
     private PessoaRepositorio pessoaRepositorio;
@@ -24,16 +24,14 @@ public class PessoaServico{
     @Autowired
     private PasswordEncoder passwordEncoder; 
 
-    public Pessoa salvar(Pessoa pessoa){
-        // Criptografa a senha antes de mandar para o banco de dados
+    public Pessoa salvar(Pessoa pessoa) {
         pessoa.setSenha(passwordEncoder.encode(pessoa.getSenha()));
-        
         String enderecoCompleto = viaCepServico.buscarEnderecoPorCep(pessoa.getCep());
         pessoa.setEndereco(enderecoCompleto);
-        
         return pessoaRepositorio.save(pessoa);
     }
-    public List<Pessoa> listarTodas(){
+
+    public List<Pessoa> listarTodas() {
         return pessoaRepositorio.findAll();
     }
 
@@ -56,21 +54,42 @@ public class PessoaServico{
         pessoaRepositorio.delete(pessoa);
     }
 
-    // Func pegar emprestado 
     public void emprestarLivro(Long idPessoa, Long idLivro) {
         Pessoa pessoa = buscarPorId(idPessoa);
         Livro livro = livroRepositorio.findById(idLivro).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
         
+        //1: Limitar a quantidade de livros emprestados por pessoa(Máximo 3)
+        if (pessoa.getLivrosEmprestados().size() >= 3) {
+            throw new RuntimeException("Limite atingido! Esta pessoa já possui 3 livros emprestados.");
+        }
+
+        //2:Verificar se há estoque disponível do livro
+        if (livro.getQuantidade() <= 0) {
+            throw new RuntimeException("Livro indisponível no estoque!");
+        }
+
+        //Executa o empréstimo e retira 1 da quantidade do estoque
+        livro.decrementarQuantidade();
         pessoa.getLivrosEmprestados().add(livro);
+        
+        livroRepositorio.save(livro);
         pessoaRepositorio.save(pessoa);
     }
 
-    //Func para devolver um Livro
     public void devolverLivro(Long idPessoa, Long idLivro) {
         Pessoa pessoa = buscarPorId(idPessoa);
         Livro livro = livroRepositorio.findById(idLivro).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
         
+        //Verifica se a pessoa realmente está com esse livro antes de devolver
+        if (!pessoa.getLivrosEmprestados().contains(livro)) {
+            throw new RuntimeException("Este livro não está emprestado para esta pessoa.");
+        }
+
+        //Executa a devolução e soma 1 de volta ao estoque
         pessoa.getLivrosEmprestados().remove(livro);
+        livro.incrementarQuantidade();
+        
+        livroRepositorio.save(livro);
         pessoaRepositorio.save(pessoa);
     }
 }

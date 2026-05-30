@@ -18,21 +18,19 @@ public class ConfiguracaoSeguranca {
             .csrf(csrf -> csrf.disable())
             .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .authorizeHttpRequests(auth -> auth
-                // LIBERA: Swagger, Banco H2 E o método POST de salvar pessoas publicamente
+                // LIBERA: Swagger, Banco H2, todas as rotas de pessoas e todas as rotas de livros
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/pessoas").permitAll()
+                .requestMatchers("/pessoas/**", "/livros/**").permitAll()
                 
-                // Bloqueia todo o resto (listar pessoas, mexer em livros, empréstimos, etc)
+                // Bloqueia qualquer outro endpoint do sistema que não esteja listado acima
                 .anyRequest().authenticated()
-            )
-            .httpBasic(org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer::getClass);
+            );
 
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Criptografia BCrypt para salvar as senhas das pessoas com segurança no banco
         return new BCryptPasswordEncoder();
     }
 }
