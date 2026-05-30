@@ -79,7 +79,11 @@
          <artifactId>jjwt-jackson</artifactId>
          <version>0.12.5</version>
          <scope>runtime</scope>
-       </dependency>     
+       </dependency>   
+	   <dependency>
+         <groupId>org.flywaydb</groupId>
+         <artifactId>flyway-core</artifactId>
+       </dependency>  
 	</dependencies>
 
 	<build>
